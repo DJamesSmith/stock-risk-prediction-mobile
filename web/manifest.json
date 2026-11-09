@@ -1,11 +1,11 @@
 {
-    "name": "stock_risk_engine_mobile",
-    "short_name": "stock_risk_engine_mobile",
+    "name": "Stock Risk Engine",
+    "short_name": "Stock Risk",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#0B3B52",
+    "theme_color": "#0E7490",
+    "description": "Live portfolio risk monitoring client for the Stock Risk Engine.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
