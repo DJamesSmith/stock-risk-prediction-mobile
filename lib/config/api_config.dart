@@ -1,7 +1,7 @@
 class ApiConfig {
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://192.168.0.103:8000',
+    defaultValue: 'http://192.168.0.103:8000',      // Base URL depends on the mac's IP address: ipconfig getifaddr en0
   );
 
   static const Duration connectTimeout = Duration(seconds: 10);
