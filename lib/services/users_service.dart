@@ -1,3 +1,4 @@
+import '../config/api_endpoints.dart';
 import '../core/api_client.dart';
 import '../core/api_response.dart';
 import '../models/page_result.dart';
@@ -9,7 +10,7 @@ class UsersService {
   final ApiClient api;
 
   Future<PageResult<AppUser>> list({String? nextUrl}) async {
-    final ApiResponse response = await api.get(nextUrl ?? '/api/accounts/users/');
+    final ApiResponse response = await api.get(nextUrl ?? ApiEndpoints.users);
     return PageResult.fromJson(response.dataMap, AppUser.fromJson);
   }
 
@@ -21,7 +22,7 @@ class UsersService {
       final ApiResponse response;
 
       if (nextUrl == null) {
-        response = await api.get('/api/accounts/users/', query: {'page_size': 100});
+        response = await api.get(ApiEndpoints.users, query: {'page_size': 100});
       } else {
         response = await api.get(nextUrl);
       }
@@ -42,7 +43,7 @@ class UsersService {
 
   Future<AppUser> update(int userId, {required String role, required int? assignedAnalystId}) async {
     final ApiResponse response = await api.patch(
-      '/api/accounts/users/$userId/',
+      ApiEndpoints.userDetail(userId),
       body: {'role': role, 'assigned_analyst': assignedAnalystId},
     );
     return AppUser.fromJson(response.dataMap);

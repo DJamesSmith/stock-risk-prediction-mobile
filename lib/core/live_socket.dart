@@ -5,7 +5,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
-import '../config/api_config.dart';
+import '../config/api_endpoints.dart';
 import '../models/live_event.dart';
 import '../models/live_quote.dart';
 import 'api_client.dart';
@@ -153,7 +153,7 @@ class LiveSocket extends ChangeNotifier {
 
     _setStatus(_attempt == 0 ? LiveStatus.connecting : LiveStatus.reconnecting);
 
-    final WebSocketChannel channel = WebSocketChannel.connect(ApiConfig.liveUri(token));
+    final WebSocketChannel channel = WebSocketChannel.connect(ApiEndpoints.liveSocketUri(token));
     _channel = channel;
 
     try {

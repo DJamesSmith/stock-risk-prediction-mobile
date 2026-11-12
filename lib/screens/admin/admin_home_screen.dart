@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../config/api_config.dart';
+import '../../config/api_endpoints.dart';
 import '../../core/api_response.dart';
 import '../../core/formatters.dart';
 import '../../core/live_socket.dart';
@@ -87,7 +87,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   }
 
   Future<void> _openInBrowser(String path) async {
-    final Uri url = ApiConfig.webPage(path);
+    final Uri url = ApiEndpoints.webPage(path);
     final bool opened = await launchUrl(url, mode: LaunchMode.externalApplication);
 
     if (!opened && mounted) {
@@ -177,13 +177,13 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               ),
                               const SizedBox(height: 12),
                               OutlinedButton.icon(
-                                onPressed: () => _openInBrowser('/datasets/'),
+                                onPressed: () => _openInBrowser(ApiEndpoints.datasetsPage),
                                 icon: const Icon(Icons.open_in_new),
                                 label: const Text('Open Datasets in browser'),
                               ),
                               const SizedBox(height: 8),
                               OutlinedButton.icon(
-                                onPressed: () => _openInBrowser('/ml/'),
+                                onPressed: () => _openInBrowser(ApiEndpoints.mlTrainingPage),
                                 icon: const Icon(Icons.open_in_new),
                                 label: const Text('Open ML Training in browser'),
                               ),

@@ -1,3 +1,4 @@
+import '../config/api_endpoints.dart';
 import '../core/api_client.dart';
 import '../core/api_response.dart';
 import '../core/json_utils.dart';
@@ -10,7 +11,7 @@ class AuthService {
 
   Future<AppUser> login(String usernameOrEmail, String password) async {
     final ApiResponse response = await api.post(
-      '/api/accounts/login/',
+      ApiEndpoints.login,
       body: {'username_or_email': usernameOrEmail, 'password': password},
       public: true,
     );
@@ -26,7 +27,7 @@ class AuthService {
     required String passwordConfirmation,
   }) async {
     await api.post(
-      '/api/accounts/register/',
+      ApiEndpoints.register,
       body: {
         'username': username,
         'email': email,
@@ -38,13 +39,13 @@ class AuthService {
   }
 
   Future<AppUser> me() async {
-    final ApiResponse response = await api.get('/api/accounts/me/');
+    final ApiResponse response = await api.get(ApiEndpoints.me);
     return AppUser.fromJson(response.dataMap);
   }
 
   Future<AppUser> updateProfile({required String username, required String email}) async {
     final ApiResponse response = await api.patch(
-      '/api/accounts/me/',
+      ApiEndpoints.me,
       body: {'username': username, 'email': email},
     );
     return AppUser.fromJson(response.dataMap);
@@ -56,7 +57,7 @@ class AuthService {
     required String newPasswordConfirmation,
   }) async {
     final ApiResponse response = await api.post(
-      '/api/accounts/change-password/',
+      ApiEndpoints.changePassword,
       body: {
         'old_password': oldPassword,
         'new_password': newPassword,
@@ -75,6 +76,6 @@ class AuthService {
       return;
     }
 
-    await api.post('/api/accounts/logout/', body: {'refresh': refresh});
+    await api.post(ApiEndpoints.logout, body: {'refresh': refresh});
   }
 }

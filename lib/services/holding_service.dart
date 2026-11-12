@@ -1,3 +1,4 @@
+import '../config/api_endpoints.dart';
 import '../core/api_client.dart';
 import '../core/api_response.dart';
 import '../models/holding.dart';
@@ -15,7 +16,7 @@ class HoldingService {
   final ApiClient api;
 
   Future<Holding> detail(int id) async {
-    final ApiResponse response = await api.get('/api/holdings/$id/');
+    final ApiResponse response = await api.get(ApiEndpoints.holdingDetail(id));
     return Holding.fromJson(response.dataMap);
   }
 
@@ -27,7 +28,7 @@ class HoldingService {
     required String buyDate,
   }) async {
     final ApiResponse response = await api.post(
-      '/api/portfolios/$portfolioId/holdings/',
+      ApiEndpoints.portfolioHoldings(portfolioId),
       body: {
         'ticker': ticker,
         'quantity': quantity,
@@ -45,7 +46,7 @@ class HoldingService {
     required String buyDate,
   }) async {
     final ApiResponse response = await api.patch(
-      '/api/holdings/$id/',
+      ApiEndpoints.holdingDetail(id),
       body: {
         'quantity': quantity,
         'buy_price': buyPrice,
@@ -56,6 +57,6 @@ class HoldingService {
   }
 
   Future<void> remove(int id) async {
-    await api.delete('/api/holdings/$id/');
+    await api.delete(ApiEndpoints.holdingDetail(id));
   }
 }

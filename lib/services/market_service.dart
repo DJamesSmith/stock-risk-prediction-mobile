@@ -1,3 +1,4 @@
+import '../config/api_endpoints.dart';
 import '../core/api_client.dart';
 import '../core/api_response.dart';
 import '../core/formatters.dart';
@@ -12,7 +13,7 @@ class MarketService {
   final ApiClient api;
 
   Future<PriceRow> latestPrice(String ticker) async {
-    final ApiResponse response = await api.get('/api/market/prices/$ticker/');
+    final ApiResponse response = await api.get(ApiEndpoints.latestPrice(ticker));
     return PriceRow.fromJson(response.dataMap);
   }
 
@@ -26,7 +27,7 @@ class MarketService {
 
       if (nextUrl == null) {
         response = await api.get(
-          '/api/market/prices/$ticker/history/',
+          ApiEndpoints.priceHistory(ticker),
           query: {
             'start': Formatters.apiDate(start),
             'end': Formatters.apiDate(end),
@@ -48,7 +49,7 @@ class MarketService {
   }
 
   Future<String> refresh(String ticker) async {
-    final ApiResponse response = await api.post('/api/market/refresh/$ticker/');
+    final ApiResponse response = await api.post(ApiEndpoints.refreshPrices(ticker));
     return response.message;
   }
 }

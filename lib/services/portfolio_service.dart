@@ -1,3 +1,4 @@
+import '../config/api_endpoints.dart';
 import '../core/api_client.dart';
 import '../core/api_response.dart';
 import '../models/page_result.dart';
@@ -9,23 +10,23 @@ class PortfolioService {
   final ApiClient api;
 
   Future<PageResult<Portfolio>> list({String? nextUrl}) async {
-    final ApiResponse response = await api.get(nextUrl ?? '/api/portfolios/');
+    final ApiResponse response = await api.get(nextUrl ?? ApiEndpoints.portfolios);
     return PageResult.fromJson(response.dataMap, Portfolio.fromJson);
   }
 
   Future<Portfolio> detail(int id) async {
-    final ApiResponse response = await api.get('/api/portfolios/$id/');
+    final ApiResponse response = await api.get(ApiEndpoints.portfolioDetail(id));
     return Portfolio.fromJson(response.dataMap);
   }
 
   Future<PortfolioSummary> summary(int id) async {
-    final ApiResponse response = await api.get('/api/portfolios/$id/summary/');
+    final ApiResponse response = await api.get(ApiEndpoints.portfolioSummary(id));
     return PortfolioSummary.fromJson(response.dataMap);
   }
 
   Future<Portfolio> create({required String name, required String description}) async {
     final ApiResponse response = await api.post(
-      '/api/portfolios/',
+      ApiEndpoints.portfolios,
       body: {'name': name, 'description': description},
     );
     return Portfolio.fromJson(response.dataMap);
@@ -33,13 +34,13 @@ class PortfolioService {
 
   Future<Portfolio> update(int id, {required String name, required String description}) async {
     final ApiResponse response = await api.patch(
-      '/api/portfolios/$id/',
+      ApiEndpoints.portfolioDetail(id),
       body: {'name': name, 'description': description},
     );
     return Portfolio.fromJson(response.dataMap);
   }
 
   Future<void> remove(int id) async {
-    await api.delete('/api/portfolios/$id/');
+    await api.delete(ApiEndpoints.portfolioDetail(id));
   }
 }

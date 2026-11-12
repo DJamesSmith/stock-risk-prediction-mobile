@@ -1,3 +1,4 @@
+import '../config/api_endpoints.dart';
 import '../core/api_client.dart';
 import '../core/api_response.dart';
 import '../core/json_utils.dart';
@@ -10,27 +11,27 @@ class AnalyticsService {
   final ApiClient api;
 
   Future<HoldingRisk> holdingRisk(int holdingId) async {
-    final ApiResponse response = await api.get('/api/analytics/holdings/$holdingId/risk/');
+    final ApiResponse response = await api.get(ApiEndpoints.holdingRisk(holdingId));
     return HoldingRisk.fromJson(response.dataMap);
   }
 
   Future<HoldingForecast> holdingForecast(int holdingId) async {
-    final ApiResponse response = await api.get('/api/analytics/holdings/$holdingId/forecast/');
+    final ApiResponse response = await api.get(ApiEndpoints.holdingForecast(holdingId));
     return HoldingForecast.fromJson(response.dataMap);
   }
 
   Future<PortfolioRiskSummary> portfolioRiskSummary(int portfolioId) async {
-    final ApiResponse response = await api.get('/api/analytics/portfolio/$portfolioId/risk-summary/');
+    final ApiResponse response = await api.get(ApiEndpoints.portfolioRiskSummary(portfolioId));
     return PortfolioRiskSummary.fromJson(response.dataMap);
   }
 
   Future<String> recompute(int holdingId) async {
-    final ApiResponse response = await api.post('/api/analytics/holdings/$holdingId/recompute/');
+    final ApiResponse response = await api.post(ApiEndpoints.holdingRecompute(holdingId));
     return asString(response.dataMap['task_id']);
   }
 
   Future<TaskStatus> taskStatus(String taskId) async {
-    final ApiResponse response = await api.get('/api/analytics/tasks/$taskId/');
+    final ApiResponse response = await api.get(ApiEndpoints.taskStatus(taskId));
     return TaskStatus.fromJson(response.dataMap);
   }
 }

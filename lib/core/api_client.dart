@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 
 import '../config/api_config.dart';
+import '../config/api_endpoints.dart';
 import 'api_response.dart';
 import 'json_utils.dart';
 import 'token_storage.dart';
@@ -22,8 +23,8 @@ class ApiClient {
   BaseOptions _options() {
     return BaseOptions(
       baseUrl: ApiConfig.baseUrl,
-      connectTimeout: const Duration(seconds: 10),
-      receiveTimeout: const Duration(seconds: 30),
+      connectTimeout: ApiConfig.connectTimeout,
+      receiveTimeout: ApiConfig.receiveTimeout,
       contentType: Headers.jsonContentType,
       responseType: ResponseType.json,
     );
@@ -123,7 +124,7 @@ class ApiClient {
 
     try {
       final Response<dynamic> response = await _refreshDio.post(
-        '/api/accounts/token/refresh/',
+        ApiEndpoints.tokenRefresh,
         data: {'refresh': refresh},
       );
       final String access = asString(asMap(asMap(response.data)['data'])['access']);

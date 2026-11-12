@@ -99,7 +99,7 @@ The app opens **one** WebSocket after login and closes it on logout.
 ws://<host>:8000/ws/live/?token=<access token>
 ```
 
-The URL is built from `API_BASE_URL`: `http` becomes `ws`, `https` becomes `wss`.
+The host comes from the same base URL as REST (`lib/config/api_config.dart`): `http` becomes `ws`, `https` becomes `wss`. The path lives in `lib/config/api_endpoints.dart`.
 
 | Event from the server | What the app does |
 |---|---|
@@ -140,7 +140,8 @@ lib/
 ├── app.dart                      providers, themes, MaterialApp.router
 ├── router.dart                   routes and login / role redirects
 ├── config/
-│   ├── api_config.dart           base URL (--dart-define) and WebSocket URL
+│   ├── api_config.dart           base URL, WebSocket base URL, timeouts (the only place the server address is set)
+│   ├── api_endpoints.dart        every REST path, the WebSocket path and the Django web page paths
 │   └── theme.dart                Material 3 themes and risk / gain colours
 ├── core/
 │   ├── api_client.dart           dio, Bearer header, one refresh + retry on 401
@@ -192,20 +193,48 @@ cd stock_risk_engine_mobile
 flutter pub get
 ```
 
-### 3. Run
+### 3. Set the server address
+
+The base URL is set in one place, `lib/config/api_config.dart`:
+
+```dart
+class ApiConfig {
+  static const String baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://192.168.0.103:8000',
+  );
+  ...
+}
+```
+
+Change `defaultValue` to your computer's Wi-Fi IP (`ipconfig getifaddr en0` on macOS). Everything else is built from it:
+
+| Used for | Built from |
+|---|---|
+| REST requests | `ApiConfig.baseUrl` + a path from `ApiEndpoints` (for example `ApiEndpoints.login`) |
+| WebSocket | `ApiConfig.webSocketBaseUrl` + `ApiEndpoints.liveSocket` + `?token=<access>` |
+| Django web pages | `ApiEndpoints.webPage(ApiEndpoints.datasetsPage)` |
+
+To use another server for one run without editing the file, pass `--dart-define`:
 
 ```bash
 flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000
 ```
 
-If `API_BASE_URL` is not passed, the app uses `http://10.0.2.2:8000` on Android and `http://127.0.0.1:8000` everywhere else. The login screen and the Profile tab show the server address in use.
+The login screen and the Profile tab show the server address in use.
+
+### 4. Run
+
+```bash
+flutter run
+```
 
 ## Running on each device
 
 | Target | Command | Backend requirement |
 |---|---|---|
 | Android emulator | `flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000` | `10.0.2.2` in `ALLOWED_HOSTS` |
-| Physical phone (same Wi-Fi) | `flutter run --dart-define=API_BASE_URL=http://<computer IP>:8000` | Computer IP in `ALLOWED_HOSTS`, server started with `runserver 0.0.0.0:8000` |
+| Physical phone (same Wi-Fi) | `flutter run` (uses `defaultValue` in `api_config.dart`) | Computer IP in `ALLOWED_HOSTS`, server started with `runserver 0.0.0.0:8000` |
 | iOS simulator | `flutter run --dart-define=API_BASE_URL=http://127.0.0.1:8000` | none |
 | Chrome | `flutter run -d chrome --web-port 3000 --dart-define=API_BASE_URL=http://127.0.0.1:8000` | `http://localhost:3000` in `CORS_ALLOWED_ORIGINS` (already there) |
 
@@ -264,7 +293,7 @@ Every REST response uses `status`, `message`, `data` and `errors`. Field errors 
 
 | Problem | Cause and fix |
 |---|---|
-| `Cannot reach the server at ...` | Wrong `API_BASE_URL`, Django not running, or the phone is on a different network. Open the base URL in the phone's browser to check. |
+| `Cannot reach the server at ...` | Wrong base URL in `api_config.dart` (or `--dart-define`), Django not running, or the phone is on a different network. Open the base URL in the phone's browser to check. |
 | `400 Bad Request` / `DisallowedHost` | The host you use is missing from `ALLOWED_HOSTS` in the backend settings. |
 | Chrome: CORS error | Run Flutter web on port 3000 (`--web-port 3000`). |
 | App bar stays on **Reconnecting** | The server was started without Daphne, or Redis database 4 (channel layer) is not running. |
